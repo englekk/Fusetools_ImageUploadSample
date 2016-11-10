@@ -1,0 +1,74 @@
+<!--[[
+	Author: Kangmin Won
+	Blog: https://blog.wonhada.com
+	Fuse Community: https://www.facebook.com/groups/fusetools/
+	License: MIT
+]]-->
+
+<App Background="#ccc" >
+
+    <Uploader ux:Global="Uploader" />
+    
+	<JavaScript>
+		var Observable = require("FuseJS/Observable");
+		var Camera = require("FuseJS/Camera");
+		var CameraRoll = require("FuseJS/CameraRoll");
+		var ImageTools = require("FuseJS/ImageTools");
+		var Uploader = require("Uploader");
+
+		var print = debug_log;
+		var uploadUrl = 'http://192.168.0.169:3000/upload';// 서버 IP를 변경하세요.
+
+		var sendPictureBtnEnabled = Observable(false);
+		var targetImgPath = Observable();
+
+		function takePicture()
+		{
+			Camera.takePicture().then(function(image)
+			{
+				var args = { desiredWidth:320, desiredHeight:320 , mode:ImageTools.SCALE_AND_CROP, performInPlace:true };
+				ImageTools.resize(image, args).then(function(resizedImage) {
+					targetImgPath.value = resizedImage.path;
+					sendPictureBtnEnabled.value = true;
+
+					CameraRoll.publishImage(resizedImage);
+				}).catch(function(reason) {
+					console.log("Couldn't resize image: " + reason);
+				});
+			}).catch(function(reason) {
+				console.log("Couldn't take picture: " + reason);
+			});
+		};
+
+		function sendPicture()
+		{
+			Uploader.send(targetImgPath.value, uploadUrl).then(function(response) {
+				console.log("upload complete.");
+				console.log(JSON.stringify(response));
+			});
+		}
+
+		module.exports = {
+			targetImgPath,
+			takePicture,
+			sendPicture,
+			sendPictureBtnEnabled
+		}
+	</JavaScript>
+
+	<ClientPanel>
+		<!-- 촬영한 사진 유무에 따라 이미지 보여주기 Begin -->
+		<WhileEmpty Items="{targetImgPath}">
+			<Image File="assets/cam_icon.png" StretchMode="PixelPrecise"/>
+		</WhileEmpty>
+		<WhileNotEmpty Items="{targetImgPath}">
+			<Image File="{targetImgPath}" StretchMode="Uniform" />
+		</WhileNotEmpty>
+		<!-- 촬영한 사진 유무에 따라 이미지 보여주기 End -->
+
+		<StackPanel Dock="Bottom">
+			<Basic.Button Text="Take picture (320x320)" Clicked="{takePicture}"/>
+			<Basic.Button Text="Send Picture" Clicked="{sendPicture}" IsEnabled="{sendPictureBtnEnabled}"/>
+		</StackPanel>
+	</ClientPanel>
+</App>

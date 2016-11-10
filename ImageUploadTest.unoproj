@@ -1,0 +1,13 @@
+{
+  "Packages": [
+    "Fuse",
+    "FuseJS",
+    "Fuse.BasicTheme",
+    "Fuse.Camera",
+    "Fuse.CameraRoll",
+    "Fuse.ImageTools"
+  ],
+  "Includes": [
+     "*"
+  ]
+}
