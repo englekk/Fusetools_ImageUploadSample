@@ -10,4 +10,8 @@ https://nodejs.org
 
 4. Start Fuse preview
 
-Blog: https://blog.WonHada.com
+Fuse blog[in Korean] :: https://blog.wonhada.com/?cat=219
+
+[![Fusetools_ImageUploadSample](https://img.youtube.com/vi/OAODfX9-uNE/0.jpg)](https://www.youtube.com/watch?v=OAODfX9-uNE)
+
+License: MIT
